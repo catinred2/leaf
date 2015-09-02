@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -108,19 +109,48 @@ func (logger *Logger) doPrintf(level int, printLevel string, format string, a ..
 }
 
 func (logger *Logger) Debug(format string, a ...interface{}) {
-	logger.doPrintf(debugLevel, printDebugLevel, format, a...)
+	// Determine caller func
+	pc, _, lineno, ok := runtime.Caller(2)
+	src := ""
+	if ok {
+		src = fmt.Sprintf("%s:%d", runtime.FuncForPC(pc).Name(), lineno)
+	}
+	str := fmt.Sprintf(format, a...)
+
+	logger.doPrintf(debugLevel, printDebugLevel, "[%s]%s", src, str)
 }
 
 func (logger *Logger) Release(format string, a ...interface{}) {
-	logger.doPrintf(releaseLevel, printReleaseLevel, format, a...)
+	// Determine caller func
+	pc, _, lineno, ok := runtime.Caller(2)
+	src := ""
+	if ok {
+		src = fmt.Sprintf("%s:%d", runtime.FuncForPC(pc).Name(), lineno)
+	}
+	str := fmt.Sprintf(format, a...)
+	logger.doPrintf(releaseLevel, printReleaseLevel, "[%s]%s", src, str)
 }
 
 func (logger *Logger) Error(format string, a ...interface{}) {
-	logger.doPrintf(errorLevel, printErrorLevel, format, a...)
+	// Determine caller func
+	pc, _, lineno, ok := runtime.Caller(2)
+	src := ""
+	if ok {
+		src = fmt.Sprintf("%s:%d", runtime.FuncForPC(pc).Name(), lineno)
+	}
+	str := fmt.Sprintf(format, a...)
+	logger.doPrintf(errorLevel, printErrorLevel, "[%s]%s", src, str)
 }
 
 func (logger *Logger) Fatal(format string, a ...interface{}) {
-	logger.doPrintf(fatalLevel, printFatalLevel, format, a...)
+	// Determine caller func
+	pc, _, lineno, ok := runtime.Caller(2)
+	src := ""
+	if ok {
+		src = fmt.Sprintf("%s:%d", runtime.FuncForPC(pc).Name(), lineno)
+	}
+	str := fmt.Sprintf(format, a...)
+	logger.doPrintf(fatalLevel, printFatalLevel, "[%s]%s", src, str)
 }
 
 var gLogger, _ = New("debug", "")
